@@ -1,0 +1,101 @@
+commands
+_________________
+
+
+php artisan make:controller controller_name
+
+php artisan make:model customer -m(create model with migration)
+
+php artisan make:migration create_tablename_table(create migration files)
+
+php artisan migrate
+
+
+->>> php artisan storage:link       (is the command to lik storage->image folder to public->imge folder)
+
+
+
+
+->>  create a project in laravel
+       ____________________________
+
+composer create-project --prefer-dist laravel/laravel Project_name
+
+
+
+---->>>laravel join tables with model
+_____________________________________
+1.get()
+If you want a number of records, then get() method can be used. It will get you an array of results as an output.
+
+$rankTeachers = Teacher::where('teacher_rank', '<', 4)->get();
+
+2.first() : this method will produce only one result as an output.
+
+$CarolDuff = Teachers::where('name', '=', 'Carol Duff')->first();
+
+
+3. all()
+
+$teacher = Teachers::all();
+
+4:find()
+
+$teacher = Teachers::find(2);
+
+
+5:update
+_________
+
+$CarolDuff=Teachers::where('name', '=','Carol Duff')->first();
+$CarolDuff->rank_level = 4;
+$CarolDuff->save();
+
+This code will change the teacher rank level of Carol Duff to 4. Here first we have found and retrieved the particular teacher’s record which was needed to be updated. 
+Secondly, we have set the desired attributes and then save() method is called.
+
+
+6:delete()
+___________
+
+Steps to delete a record:
+
+	Retrieve record to be deleted
+	Call delete() method
+OR
+
+	Call destroy() method
+
+ex:
+
+$teacher = Teachers::find(2);
+$teacher ->delete();
+
+OR
+
+To delete one record:
+Teachers::destroy(2);
+
+
+OR
+
+To delete multiple records:
+Teachers::destroy(2, 3, 4);
+
+
+
+
+
+
+data base connection with postgres sql
+___________________________________
+
+env file
+______
+
+DB_CONNECTION=pgsql
+DB_HOST=127.0.0.1
+DB_PORT=5433
+DB_DATABASE=larav
+DB_USERNAME=postgres
+DB_PASSWORD=root

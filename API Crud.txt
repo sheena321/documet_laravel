@@ -1,0 +1,109 @@
+API connecting with postman
+_______________________________
+
+step1: create database in pgsql
+
+step2: chnge config & env files to make connection with DB
+
+step3 :make model(using -m command)
+
+step4: make controller,(import model class by use model_className)
+
+step5: set route in route->api.php file
+
+step6: open postman, copy the link php artisan serve result page to url bar
+
+step7: set get/post(left side of url bar)
+
+step8: send reequest
+
+
+
+
+
+
+
+
+api controller
+_________________
+
+https://youtu.be/2WGJpeJi_VY
+
+
+
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use App\Models\api_model;
+
+class api_controller extends Controller
+{
+    function insert_api(Request $req){
+$name=$req->name;
+$pass=$req->password;
+$email=$req->email;
+$ob1=new api_model([
+    'name'=>$name,
+    'password'=>$pass,
+    'email'=>$email
+
+]);
+$ob1->save();
+return response(['key1'=>"success"]);
+    }
+
+
+    function delete_api(Request $req,$id){
+        // $id=$req->id;
+        api_model::find($id)->delete();
+
+
+    }
+
+
+    function update_api(Request $req){
+        $id=$req->id;
+        $name=$req->name;
+        api_model::find($id)->update([        //here i need to update name only
+            'name'=>$name
+
+        ]);
+
+    }
+
+    function get_api(){
+        $var_retrive=api_model::get();   
+        return response(["key_value"=>$var_retrive]);
+
+    }
+    function getOnedata_api(Request $req,$id){
+$var1=api_model::find($id);
+return response(["key_value"=>$var1]);
+
+    }
+
+    function chk_name_api(Request $req){
+        $name=$req->input("name");
+        $email=$req->input("email");
+        $var2=api_model::where('name','like','%'.$name.'%')->orwhere('email','like','%'.$email.'%')->get();
+        // $var2=api_model::wherelike('name',$name)->get();
+        return response(["key2"=>$var2]);
+
+        
+    }
+
+}
+
+
+api.php
+_________
+
+
+route::post('api_insertion',[App\Http\Controllers\api_controller::class,"insert_api"]);
+route::delete('api_deletion/{id}',[App\Http\Controllers\api_controller::class,"delete_api"]);
+route::put('api_update',[App\Http\Controllers\api_controller::class,"update_api"]);
+route::get('api_get',[App\Http\Controllers\api_controller::class,"get_api"]);
+route::get('api_onedata/{id}',[App\Http\Controllers\api_controller::class,"getOnedata_api"]);
+route::get("search_name",[App\Http\Controllers\api_controller::class,"chk_name_api"]);

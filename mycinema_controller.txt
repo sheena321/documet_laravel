@@ -1,0 +1,53 @@
+web.php
+________
+
+
+// Route::post("loguser1",[App\Http\Controllers\user_controller::class,'user_insert']);
+// Route::post("loguser3",[App\Http\Controllers\user_controller::class,'login_user']);
+// route::get("loguser2",[App\Http\Controllers\user_controller::class,'logout_user']);
+
+
+
+controller
+__________
+
+
+function user_insert(Request $req){
+//     $u_name=$req->username;
+//     $password=$req->userpsw;
+//     $mobile=$req->mob;
+//     $email=$req->eid;
+//     $district=$req->dist;
+//     $state=$req->state;
+//     // echo $req->state;
+//     $ob=new userDetails_model(['username'=>$u_name,'password'=>$password,'email'=>$email,'mobile'=>$mobile,'district'=>$district,'state'=>$state]);
+//     print_r($ob);
+//     $ob->save();
+// echo "saved";
+//     // return redirect("loguser");
+//     return back()->withSuccess('Success!') ; 
+// }
+
+
+
+function login_user(Request $req){
+//     $u_name=$req->email;
+//     $password=$req->userpsw;
+//     // echo $u_name;
+//     // $data= userDetails_model::where('email',$u_name)->where('password',$password)->get();
+//     $data=userDetails_model::all();
+//     foreach($data as $i){
+//         if($i->email==$u_name && $i->password==$password){
+//             $req->session()->put('name',$u_name);
+//             return view("userdash",['key'=>$i]);
+//         }
+//     }
+// }
+
+
+
+function logout_user(Request $req){
+
+//     $req->session()->flush();
+//     return redirect("loguser");
+// }

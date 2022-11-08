@@ -1,0 +1,201 @@
+with model crud operations
+_____________________________
+
+
+
+controller
+___________
+
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use App\Models\customer;//importing model(instead of using use DB)
+
+class controller2 extends Controller
+{
+
+
+
+
+insering
+_________
+
+
+
+    function insert_data(Request $req){
+        $fir_name=$req->fname;
+        $sec_name=$req->lname;
+        $email=$req->email;
+        $pass=$req->password;    
+$ob=new customer(['fname'=>$fir_name,'lname'=>$sec_name,'email'=>$email,'password'=>$pass]);//this is how we input data through model
+$ob->save();
+return redirect('reg_model');
+    }
+
+
+retrive all data from datble
+____________________________
+
+
+
+    function get_data_modal(){
+//use model table
+        $ret=customer::get();
+        return view('laravelcrud/registration_usig_model',['key_get'=>$ret]);
+    }
+
+
+
+
+delete
+________
+    function delete_model($id){
+        $ret_del=customer::find($id)->delete();
+        echo $id;
+        $ret=customer::get();
+        return view('laravelcrud/registration_usig_model',['key_get'=>$ret]);
+        // return view('reg_model');
+
+    }
+
+
+
+Update
+_______
+
+    function update_model($id){
+        // $ret_del=customer::find($id)-> 
+        $ret_upd=customer::find($id);
+        // print_r($ret_upd) ;
+        return view('laravelcrud/update_form1',['key_get1'=>$ret_upd]);
+
+    }
+
+    function update_display(Request $req,$id){
+        $fir_name=$req->fname;
+        $sec_name=$req->lname;
+        $email=$req->email;
+        $pass=$req->password;    
+        $ret1_=customer::find($id)->update([
+'fname'=> $fir_name,
+'lname'=> $sec_name,
+'email'=> $email,
+'password'=> $pass
+        ]);
+       return redirect("reg_model");
+    }
+    
+}
+
+
+
+html files
+______________
+
+
+For insert,delete,show data)
+
+
+
+<form action="" method="post" style="margin-left:200px; border:1px solid black;background-color:grey;width:200px;heigtht:200px;">
+    @csrf
+    
+    <h3>registration</h3>
+    &nbsp;&nbsp;<label for="">first name</label>    
+     &nbsp;&nbsp;<input type="text" name="fname" id="" >
+    &nbsp;&nbsp;<label for="">lastname</label>
+    &nbsp;&nbsp;<input type="text" name="lname" id="">
+    &nbsp;&nbsp;<label for="">email</label>
+    &nbsp;&nbsp;&nbsp;&nbsp;<input type="text" name="email" id="" >
+    &nbsp;&nbsp;<label for="">password</label>
+    &nbsp;&nbsp;<input type="text" name="password" id="" ><br>
+    &nbsp;&nbsp;<button type="submit">Cancel</button><br>
+    <button type="submit">submit</button>
+    </form>
+    
+<br>
+    <table style="border:3">
+        <tr>    <th>id</th>
+    <th>first_name</th>&nbsp;&nbsp;&nbsp;&nbsp;
+    <th>last_name</th>&nbsp;&nbsp;&nbsp;&nbsp;
+    <th>email</th>&nbsp;&nbsp;&nbsp;&nbsp;
+    <th>password</th>
+    
+    </tr>
+    @forelse($key_get as $i)
+    <tr>
+        <td>{{$i->id}}</td>
+        
+        <td>{{$i->fname}}</td>
+        
+        <td>{{$i->lname}}</td>
+        
+        <td>{{$i->email}}</td>
+        
+        <td>{{$i->password}}</td>
+        <td><a href="{{ url('delete1') }}/{{$i->id}}">delete</a></td>
+        <td><a href="{{ url('update_new') }}/{{$i->id}}">update</a></td>
+@empty
+<td>nothing to display</td>
+@endforelse
+    </tr>
+
+    </table>
+
+    <a href="">Logout</a>
+</body>
+</html>
+
+
+
+
+To update Form
+___________________
+
+
+   @if(isset($key_get1))
+<form action="{{ url('update_new1')}}/{{$key_get1->id}}" method="post" style="margin-left:200px; border:1px solid black;background-color:grey;width:200px;heigtht:200px;">
+    @csrf
+    
+    <h3>registration</h3>
+    &nbsp;&nbsp;<label for="">first name</label>    
+    &nbsp;&nbsp;<input type="text" name="fname" id="" value="{{$key_get1->fname}}">
+    &nbsp;&nbsp;<label for="">lastname</label>
+    &nbsp;&nbsp;<input type="text" name="lname" id="" value="{{$key_get1->lname}}">
+    &nbsp;&nbsp;<label for="">email</label>
+    &nbsp;&nbsp;&nbsp;&nbsp;<input type="text" name="email" id="" value="{{$key_get1->email}}">
+    &nbsp;&nbsp;<label for="">password</label>
+    &nbsp;&nbsp;<input type="text" name="password" id="" value="{{$key_get1->password}}"><br>
+    <button type="submit">update</button>
+    </form>
+    @endif
+</body>
+</html>
+
+
+
+web.php
+__________
+
+route::view('reg_model','laravelcrud/registration_usig_model');
+route::post('reg_model',[App\Http\Controllers\controller2::class,"insert_data"]);
+route::get('reg_model',[App\Http\Controllers\controller2::class,"get_data_modal"]);
+route::get('delete1/{id}',[App\Http\Controllers\controller2::class,"delete_model"]);
+route::get('update_new/{id}',[App\Http\Controllers\controller2::class,"update_model"]);
+route::post('update_new1/{id}',[App\Http\Controllers\controller2::class,"update_display"]);
+
+
+
+inside model folder
+________________________
+
+
+class customer extends Model
+{
+    use HasFactory;
+    protected $guarded=['id'];
+    // public $fillable=['fname','lname','email','password'];
+    public $timestamps=false;
+}
+```

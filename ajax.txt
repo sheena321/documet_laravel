@@ -1,0 +1,320 @@
+ajax
+_________
+
+
+web.php
+______________
+
+//ajax registration
+route::view('ajax_reg','ajax/ajax_registration');
+route::post('ajax_reg1',[App\Http\Controllers\ajax_controller::class,"ajax_insert"]);
+//check a name
+route::post('ajax_reg2',[App\Http\Controllers\ajax_controller::class,"check_a_name"]);
+//to get  data
+route::get('ajax_reg3',[App\Http\Controllers\ajax_controller::class,"get_data"]);
+//to delete data
+route::post('ajax_reg4',[App\Http\Controllers\ajax_controller::class,"delete_data"]);
+//update data (post an id) data given to modal
+route::post('ajax_reg5',[App\Http\Controllers\ajax_controller::class,"update_data"]);
+//update data from modal
+route::post('ajax_reg6',[App\Http\Controllers\ajax_controller::class,"update_modal"]);
+
+
+
+
+
+blade.php
+____________
+// to handle csrf meta data(add this above title)
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
+
+
+
+  <title>Document</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct" crossorigin="anonymous"></script>
+    <!-- jquer cdn -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>//
+</head>
+<body onload="data_retrive()">
+    <br><br>
+    <label for=""> username</label>
+    <input type="text" name="usr_name" id="user1">
+    <label for=""id='l1'></label>
+    <label for=""> password</label>
+    <input type="text" name="psw" id="psw1">
+    <label for=""> email</label>
+    <input type="text" name="email" id="email1">
+    <button type="submit" id="submit">submit</button>
+    in
+    <script>
+      
+        //to handle csrf  problems
+        $.ajaxSetup({
+   headers: {
+     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+   }
+});
+
+
+// writing jquery using button click event 
+        $('#submit').click(function(){
+    $.ajax({                           //ajax function startedto pass the value to db
+    url:'ajax_reg1',                   //url in web(router)
+    type:'POST',                       //method
+    data:{
+    name2:$('#user1').val(),
+    pass:$('#psw1').val(),
+    email2:$('#email1').val()
+    },
+    success:function(){                //if  ajax function success comre to this field
+        // alert("success");
+        data_retrive();
+
+    }
+})
+    })
+
+
+
+
+    //typing in textbox id='user1' and changed in to next textbox this function activated
+       $('#user1').change(function(){
+          name=$(this).val();
+         if(name!=null)
+		{
+  		$.ajax({
+    		url:'ajax_reg2',
+    		type:'POST',
+    		data:{
+       		name3:name
+    			},
+    		success:function(response)
+				{
+				document.getElementById("l1").innerHTML=response.key2;
+    				}
+  			})  
+		}
+
+       }) 
+
+
+
+
+       // retrive data
+   function data_retrive(){
+    $.ajax({
+    		url:'ajax_reg3',
+    		type:'GET',
+    		success:function(Response){
+    
+    data1=Response.data;	//retrive data through response from controller query
+    $('.seperate').remove();//remove the class"seperate" for new insertion value to be added
+    for(i=0;i<Response.data.length;i++){
+    $("#t1").append("<tr class='seperate'><td>"+  data1[i].id+"</td>"+"<td>"+ data1[i].username+"</td>"+"<td>"+data1[i].password+"<td>"+data1[i].email+"</td><td><button onclick='delete1("+data1[i].id+")'>delete</button></td><td><button onclick='update1("+data1[i].id+")'  data-toggle='modal' data-target='#exampleModal'>update</button></tr>");
+    }
+       }
+    });
+}
+
+
+
+
+
+function delete1(id){
+    $.ajax({
+    url:'ajax_reg4',
+    type:'POST',
+    data:{
+        passing_id:id
+    },
+    success:function(Response){
+        data_retrive();
+    }
+})    
+// alert(id);
+}
+
+
+
+
+
+function update1(id){
+    $.ajax({
+    url:'ajax_reg5',
+    type:'POST',
+    data:{
+        passing_id:id
+    },
+    success:function(Response){
+    // here attach response.data to modal
+    data_retrive1=Response.data;
+   
+upid = data_retrive1.id
+document.getElementById("user2").value=data_retrive1.username;
+document.getElementById("psw2").value=data_retrive1.password;
+document.getElementById("email2").value=data_retrive1.email;
+
+    }
+})    
+// alert(id);
+}
+
+
+
+
+//data taken from modal
+function update_modal(id){
+  $.ajax({
+    url:'ajax_reg6',
+    type:'POST',
+    data:{
+      uppid:id,
+       name4:$('#user2').val(),
+       pass4:$('#psw2').val(),
+       email4:$('#email2').val()
+    },
+    success:function(){                //if  ajax function success comre to this field
+      data_retrive();
+    },
+    error:function(){
+      alert('no')
+    }
+  })
+}
+    </script>
+
+
+
+
+<br><br>
+    <table border=1 id="t1">
+        <tr>
+            <th>id</th>
+            <th>username</th>
+            <th>Password</th>
+            <th>email</th>
+        </tr>
+    </table>
+
+  
+
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-primary">
+  Launch demo modal
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        
+        <label for=""> username</label>
+    <input type="text" name="usr_name" id="user2">
+    <label for=""id='l1'></label>
+    <label for=""> password</label>
+    <input type="text" name="psw" id="psw2">
+    <label for=""> email</label>
+    <input type="text" name="email" id="email2">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" onclick="update_modal(upid)" data-dismiss="modal">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+      
+</body>
+</html>
+
+
+
+
+
+
+controller
+____________
+
+use DB;
+use Response;
+
+class ajax_controller extends Controller
+{
+function ajax_insert(Request $req){
+    $name3=$req->name2;
+   $password=$req->pass;
+    $email3=$req->email2;
+ DB::table("ajax_reg_tbl")->insert([
+'username'=>$name3,
+'password'=>$password,
+'email'=>$email3
+]);
+}
+
+
+//to check value in th e textbox is existing in db
+function check_a_name(Request $req){
+$name_pass=$req->name3;
+$get_similar_name=DB::table("ajax_reg_tbl")->where('username',$name_pass)->first();
+if(is_null($get_similar_name)){
+    return Response::json(array('success'=>true,'key2'=>"username available"));
+}else{
+    return Response::json(array(
+        'success'=>true,
+        'key2'=>"username not available"
+
+    ));
+
+}
+
+}
+
+//show data
+function get_data(){
+    $retriv_data=DB::table("ajax_reg_tbl")->get();
+return response::json(array('data'=> $retriv_data));
+}
+
+function delete_data(Request $req){
+$passing1_data=$req->passing_id;
+DB::table("ajax_reg_tbl")->where('id',$passing1_data)->delete();
+
+}
+
+
+function update_data(Request $req){
+    $passing2_data=$req->passing_id;
+    $retriv_data1=DB::table("ajax_reg_tbl")->where('id',$passing2_data)->first();
+    return response::json(array('data'=> $retriv_data1));
+}
+
+
+
+function update_modal(Request $req){
+    $id=$req->uppid;
+    $name3=$req->name4;
+    $pass3=$req->pass4;
+     $email3=$req->email4;
+     DB::table("ajax_reg_tbl")->where("id",$id)->update([
+        'username'=>$name3,
+        'password'=>$pass3,
+        'email'=>$email3 
+        ]);
+        // return response::json(array('data'=> 'data deleted'));
+
+}
+    
+
+}

@@ -1,0 +1,317 @@
+/laravel sum
+route::view('larsum','laravelcrud/lar_sum');
+route::post('larsum',[App\Http\Controllers\controller1::class,"sum"]);
+
+
+//laravel form to insert
+route::view('lar_form','laravelcrud/form_larcrud');
+route::post('lar_form',[App\Http\Controllers\controller1::class,"data_entry"]);
+// route::view('showdata','laravelcrud/show_data'); this command not used because webpage loaded with value so we need only get method
+
+//display data using laravel
+route::get('showdata',[App\Http\Controllers\controller1::class,"display"]);
+
+//delete/update data from showdata_form by clicking delete/update link
+route::get('delete/{Id}',[App\Http\Controllers\controller1::class,"del"]);
+route::get('update/{Id}',[App\Http\Controllers\controller1::class,"update"]);
+route::post('update1/{Id}',[App\Http\Controllers\controller1::class,"update_data"]);
+
+//login using laravel
+route::view('laravellogin','laravelcrud/lar_login');
+route::post('laravellogin',[App\Http\Controllers\controller1::class,"login"]);
+route::get('logout',[App\Http\Controllers\controller1::class,"logout"]);
+// route::view('user_details','laravelcrud/User_details_show');
+
+
+//show the details of user after login
+route::get('view_useerdetails',[App\Http\Controllers\controller1::class,"Profile_show"]);
+
+
+//file(image) uploading using laravel
+route::view('fileupload','laravelcrud/file_upload');
+route::post('fileupload',[App\Http\Controllers\controller1::class,"file_upload"]);
+route::get('fileupload',[App\Http\Controllers\controller1::class,"retrive_data"]);
+
+
+
+route::view('reg_model','laravelcrud/registration_usig_model');
+route::post('reg_model',[App\Http\Controllers\controller2::class,"insert_data"]);
+route::get('reg_model',[App\Http\Controllers\controller2::class,"get_data_modal"]);
+route::get('delete1/{id}',[App\Http\Controllers\controller2::class,"delete_model"]);
+route::get('update_new/{id}',[App\Http\Controllers\controller2::class,"update_model"]);
+route::post('update_new1/{id}',[App\Http\Controllers\controller2::class,"update_display"]);
+
+
+//login ussing model
+route::view('login_model','laravelcrud/login_lara_model');
+
+
+
+laraval registration insertion
+________________________________
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <title>Document</title><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct" crossorigin="anonymous"></script>
+
+</head>
+<body>
+<form action="" method="post" style="border:1px solid grey;background-color: grey;">
+    @csrf
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <label for=""><h1 style="margin-left:100px ;">login</h1></label><br>
+                <label for="">email</label>
+                <input type="text" name="email" id="" value=""><br>
+                <label for="">password</label>
+                <input type="text" name="psw" id="" value=""><br>
+                <button type="submit">ok</button>
+                <button type="submit">cancel</button>
+            </div>
+        </div>
+    </div>
+  
+</form>
+@if(isset($key_disp))
+<p>{{$key_disp->email}}</p>
+
+@endif
+@if(isset($key_chkvalue))
+<!-- <p>{{$key_chkvalue}}</p> or-->
+<script>alert("{{$key_chkvalue}}");</script>
+@endif
+
+</body>
+</html>
+
+
+
+
+
+controller(insert)
+------------
+
+function data_entry(Request $req){
+$fir_name=$req->fname;
+$sec_name=$req->lname;
+$email=$req->email;
+$pass=$req->password;
+DB::table("register")->insert([ // inserting values from database (use the same db field name used)
+    'fname'=>$fir_name,
+    'lname'=>$sec_name,
+    'email'=>$email,
+    'password'=>$pass
+  
+]);
+return view('laravelcrud/form_larcrud');//focous on same page(give the page location)
+}
+
+
+display data in table
+_______________________
+
+<body>
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">id</th>
+      <th scope="col">first name</th>
+      <th scope="col">Last name</th>
+      <th scope="col">email</th>
+      <th scope="col">password</th>
+    </tr>
+  </thead>
+  <!-- @if(isset($key_disp)) 
+<p>{{ $key_disp }} </p>
+  in php 'double curly brackets' used to display data which get from controller
+  @endif -->
+  @forelse($key_disp as $i)
+  <tr> <!--forelse once check value exist or not .it has an emptytag to show msg if it not exist-->
+<td>{{ $i->id }}</td>
+<td>{{ $i->fname }}</td>
+<td>{{$i->lname}}</td>
+<td>{{$i->email}}</td>
+<td>{{$i->password}}</td>
+<td><a href="{{ url('delete') }}/{{$i->id}}">delete</a></td>
+<td><a href="{{ url('update') }}/{{$i->id}}">update</a></td>
+@empty
+<td>no data</td>
+  </tr>
+ @endforelse
+</table>
+<a href="{{url('logout')}}">Logout</a>
+</body>
+
+</html>
+
+controller(display)
+____________________
+
+function display(){
+    $data_get = DB::table("register")->get();//get() function retrive data from database
+    return view('laravelcrud/show_data',["key_disp"=>$data_get]);
+}
+
+
+
+
+delete
+________
+
+same in above(when u click on the delete hyperlink in table)
+<td><a href="{{ url('delete') }}/{{$i->id}}">delete</a></td>
+
+
+controller
+__________
+function del($id){
+DB::table("register")->where("id",$id)->delete();
+return redirect("showdata");
+}
+
+
+
+
+update
+______
+
+
+<td><a href="{{ url('update') }}/{{$i->id}}">update</a></td>
+
+
+
+controller
+_____________
+
+
+function update($id){
+   $element= DB::table("register")->where("id",$id)->first();
+   return view(' @csrfupdate',["key_disp"=>$element]);
+
+}
+
+_____________________________________________________________________________________
+
+
+
+
+updating form
+--------------
+<body>
+    @if(isset($key_get1))
+<form action="{{ url('update_new1')}}/{{$key_get1->id}}" method="post" style="margin-left:200px; border:1px solid black;background-color:grey;width:200px;heigtht:200px;">
+    @csrf
+    
+    <h3>registration</h3>
+    &nbsp;&nbsp;<label for="">first name</label>    
+    &nbsp;&nbsp;<input type="text" name="fname" id="" value="{{$key_get1->fname}}">
+    &nbsp;&nbsp;<label for="">lastname</label>
+    &nbsp;&nbsp;<input type="text" name="lname" id="" value="{{$key_get1->lname}}">
+    &nbsp;&nbsp;<label for="">email</label>
+    &nbsp;&nbsp;&nbsp;&nbsp;<input type="text" name="email" id="" value="{{$key_get1->email}}">
+    &nbsp;&nbsp;<label for="">password</label>
+    &nbsp;&nbsp;<input type="text" name="password" id="" value="{{$key_get1->password}}"><br>
+    <button type="submit">update</button>
+    </form>
+    @endif
+</body>
+</html>
+
+
+
+
+
+updating controller
+-------------------
+
+
+
+function update_data(Request $req,$id){
+    $fir_name=$req->fname;
+$sec_name=$req->lname;
+$email=$req->email;
+$pass=$req->password;
+
+    DB::table("register")->where("id",$id)->update( [ 
+    'fname'=>$fir_name,
+    'lname'=>$sec_name,
+    'email'=>$email,
+    'password'=>$pass]);
+
+    // return redirect("showdata");
+}
+
+
+web.php(login & logout)
+__________________
+
+
+//login using laravel
+route::view('laravellogin','laravelcrud/lar_login');
+route::post('laravellogin',[App\Http\Controllers\controller1::class,"login"]);
+route::get('logout',[App\Http\Controllers\controller1::class,"logout"]);
+
+//show the details of user after login
+route::get('view_useerdetails',[App\Http\Controllers\controller1::class,"Profile_show"]);
+
+
+
+
+controller(login , logout & session creation and distruction)
+______________
+
+login
+______
+
+function login(Request $req){
+    $em=$req->email;
+    $psw1=$req->psw;
+
+    $db_email= DB::table("register")->where("email",$em)->first();
+    
+    if(is_null($db_email)){
+        $msg="no elements";
+        return view("laravelcrud/lar_login",["key_chkvalue"=>$msg]);
+    }
+    elseif($em==$db_email->email && $psw1==$db_email->password)
+    {
+        $req->session()->put("login_session_name",$db_email->id);//inside put()(name of the session name as our choice,id of that row)
+return redirect("showdata");
+    }else{
+        $msg="wrong password";
+        return view("laravelcrud/lar_login",["key_chkvalue"=>$msg]);
+    }
+}
+
+
+logout
+_______
+
+function logout(){
+session()->forget("login_session_name");// to distroy session session()->flush()
+session()->flush();
+return redirect("laravellogin");
+}
+
+
+
+
+
+
+
+
+
+db
+____
+
+
+create table registration(id serial primary key,name varchar(30),password varchar(30),email varchar(30));

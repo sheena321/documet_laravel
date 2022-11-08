@@ -1,0 +1,83 @@
+function login(Request $req){
+    $em=$req->email;
+    $psw1=$req->psw;
+
+    $db_email= DB::table("register")->where("email",$em)->first();
+
+    if(is_null($db_email)){
+        $msg="no elements";
+        return view("laravelcrud/lar_login",["key_chkvalue"=>$msg]);
+    }
+    elseif($em==$db_email->email && $psw1==$db_email->password)
+    {
+        $req->session()->put("login_session_name",$db_email->id);//inside put()(name of the session name as our choice,id of that row)
+        return redirect("showdata");
+    }else{
+        $msg="wrong password";
+        return view("laravelcrud/lar_login",["key_chkvalue"=>$msg]);
+    }
+}
+
+
+
+
+function logout(){
+session()->forget("login_session_name");// to distroy session session()->flush()
+session()->flush();
+return redirect("laravellogin");
+}
+
+
+
+function Profile_show(Request $req){
+if(session()->has("login_session_name")){
+    //to get session
+    $id1=  $req->session()->get("login_session_name");//getting its id
+echo $id1;
+$details=DB::table("register")->where("id",$id1)->first();//select det
+
+return view("laravelcrud/User_details_show",["key_display"=>$details]);
+
+}else{
+    return view("laravelcrud/lar_login");
+}
+
+
+
+}
+
+
+
+
+function file_upload(Request $req){
+    $name1=$req->name;
+    $email1=$req->email;
+    $img1="img".time().".".$req->file1->getClientOriginalExtension();//getClientOriginalExtension() is used to  extract extension of file
+    // echo $img1;
+    $req->file1->storeAs("public/img_file",$img1);
+    db::table("file_details")->insert([
+'uname'=>$name1,
+'email'=>$email1,
+'image_file'=>$img1
+    ]);
+    // return view('laravelcrud/file_upload',['key_value'=>"insert successfuly"]);
+    return redirect("fileupload");
+
+    }
+
+
+
+
+web.php
+__________
+
+
+//login using laravel
+route::view('laravellogin','laravelcrud/lar_login');
+route::post('laravellogin',[App\Http\Controllers\controller1::class,"login"]);
+route::get('logout',[App\Http\Controllers\controller1::class,"logout"]);
+// route::view('user_details','laravelcrud/User_details_show');
+
+
+//show the details of user after login
+route::get('view_useerdetails',[App\Http\Controllers\controller1::class,"Profile_show"]);

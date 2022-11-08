@@ -1,0 +1,16 @@
+function get_categories(){
+            alert("error");
+            $.ajax({
+                url:"get_productcategory",
+                type:"GET",
+                success:function(response){
+                    console.log(response.msg);
+                    category="";
+                for (i in response.msg){
+                    category +="<option value=" + response.msg[i]['id'] +">" + response.msg[i]['cat_name'] + "</option>"
+                }
+                $('#s1').append(category);
+                }
+
+            })
+        }
