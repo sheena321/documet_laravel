@@ -1,9 +1,13 @@
-file upload
-_______________
+blade
+_______
 
-blade.php
-_________
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
@@ -22,9 +26,9 @@ _________
         
 
     </form>
-  @if(isset($key_value))
+  <!-- @if(isset($key_value))
   <p>{{$key_value }}</p>
-            @endif
+            @endif -->
 
 
             <table class="table">
@@ -54,16 +58,11 @@ _________
 </html>
 
 
-web.php
-________
 
-route::view('fileupload','laravelcrud/file_upload');
-route::post('fileupload',[App\Http\Controllers\controller1::class,"file_upload"]);
-route::get('fileupload',[App\Http\Controllers\controller1::class,"retrive_data"]);
 
 
 controller
-___________
+__________
 
 function file_upload(Request $req){
     $name1=$req->name;
@@ -82,9 +81,7 @@ function file_upload(Request $req){
     }
 
 
-
-
-    function retrive_data(){
+function retrive_data(){
 
 $get_element=DB::table("file_details")->get();
 // echo $get_element;
@@ -92,3 +89,29 @@ return view('laravelcrud/file_upload',['key1_value'=>$get_element]);
 
 
     }
+
+
+
+
+migration
+___________
+ public function up()
+    {
+        Schema::create('file_details', function (Blueprint $table) {
+            $table->id();
+            $table->string('uname',20);
+            $table->string('email',20);
+            $table->string('image_file',20);
+            $table->timestamps();
+        });
+    }
+
+
+
+web.php
+___________
+
+
+route::view('fileupload','laravelcrud/file_upload');
+route::post('fileupload',[App\Http\Controllers\controller1::class,"file_upload"]);
+route::get('fileupload',[App\Http\Controllers\controller1::class,"retrive_data"]);

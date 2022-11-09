@@ -1,0 +1,67 @@
+image file uploading
+___________________
+
+<?php
+include("db.php");
+if(isset($_POST['btn1'])){
+$name=$_POST['name'];
+$class=$_POST['class'];
+$image_folder="images/";
+$image_name=$image_folder.rand().basename($_FILES['upload']['name']);
+move_uploaded_file($_FILES['upload']['tmp_name'],$image_name);
+$qry_dbimg=pg_query($db_connct,"insert into image(name,class,image_name) values('$name','$class','$image_name')");
+if($qry_dbimg){
+    echo "image uploaded";
+
+}else{
+    echo "failed to upload image";
+}
+
+}
+
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=form, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form method="post" enctype="multipart/form-data">
+        <input type="file" name="upload" id="">
+        <input type="text" name="name" id="">
+        <input type="text" name="class" id="">
+        <button type="submit" name='btn1'>insert</button>
+        
+</form>
+
+</body>
+</html>
+
+
+
+
+
+db.php
+________
+
+
+<?php
+$host="localhost";//host declaration
+$port="5433";//port declaration
+$dbname="crudexample1";//Database name
+$user="postgres";//DB which used
+$password="root";//its password
+$cnn_string="host={$host} port={$port} dbname={$dbname} user={$user} password={$password}";// connection string to db
+
+$db_connct=pg_connect($cnn_string);//pg_connect is a method which connect the database with connection string,where connection string consist details of db(postgre) 
+if($db_connct){
+    echo "connected";
+
+}
+else{
+    echo "not connected";
+}
+?>
