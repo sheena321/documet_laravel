@@ -1,0 +1,199 @@
+controller
+________
+
+use App\Models\user_detail;
+
+class control extends Controller
+{
+function insert_fn(Request $req){
+$name1=$req->name;
+$psw1=$req->psw;
+$mob1=$req->mob;
+$email1=$req->email;
+
+$ob1=new user_detail(['name'=>$name1,'password'=>$psw1,'mobile'=>$mob1,'email'=>$email1]);
+$cat=$ob1->save();
+if($cat){
+echo "data inserted successfully";
+}
+return redirect("regi");
+}
+
+
+
+function chk_login(Request $req){
+    $name1=$req->name;
+    $psw1=$req->psw;
+    $data= user_detail::all();
+
+    foreach($data as $i){
+    if($i->name==$name1 && $i->password==$psw1){
+        $req->session()->put('ses_name',$i->name);
+        return view('home',['key1'=>$i]);
+    }
+}
+}
+
+function showall(){
+    $data=user_detail::all();
+    return view('showAll',['key2'=>$data]);
+}
+
+
+function logout(){
+    session()->forget("ses_name");
+    session()->flush();
+    return redirect("login");
+}
+
+
+
+function del($id){
+$data=user_detail::find($id)->delete();
+    return redirect("showall");
+
+}
+
+
+
+
+function update($id){
+$data=user_detail::find($id);
+return view('update_page',['key3'=>$data]);
+}
+
+function update_new(Request $req,$id){
+    $name1=$req->name;
+$psw1=$req->psw;
+$mob1=$req->mob;
+$email1=$req->email;
+    user_detail::find($id)->update(['name'=>$name1,'password'=>$psw1,'mobile'=>$mob1,'email'=>$email1]); 
+    return redirect("showall");
+}
+}
+
+
+html
+______
+
+
+insert
+_______
+
+ <form action="" method="post">
+        @csrf
+        <label for="" >enter name</label>
+        <input type="text" name="name" id="" placeholder="enter anme"><br><br>
+        <label for="" >enter password</label>
+        <input type="text" name="psw" id="" placeholder="enter anme"><br><br>
+        <label for="" >enter mobile</label>
+        <input type="text" name="mob" id="" placeholder="enter anme"><br><br>
+        <label for="" >enter email</label>
+        <input type="text" name="email" id="" placeholder="enter anme"><br><br>
+        <button type="submit">submit</button>
+    </form>
+
+
+
+
+showall
+_________
+
+<form action="" method="post">
+        <table border=3>
+            <tr>
+                <th>id</th>
+                <th>name</th>
+                <th>password</th>
+                <th>mobile</th>
+                <th>email</th>
+                <th colspan=2>action</th>
+
+            </tr>
+            @foreach($key2 as $i)
+            <tr>
+            <td>{{$i->id}}</td>
+            <td>{{$i->name}}</td>
+            <td>{{$i->password}}</td>
+            <td>{{$i->mobile}}</td>
+            <td>{{$i->password}}</td>
+            <td><a href="{{url('delete')}}/{{$i->id}}">delete</a></td>
+            <td><a href="{{url('update')}}/{{$i->id}}">update</a></td>
+            </tr>
+            @endforeach
+        </table>
+    </form>
+
+
+
+update
+_______
+
+@if(isset($key3))
+<form action="{{url('update1')}}/{{$key3->id}}" method="post">
+        @csrf
+        <label for="" >enter name</label>
+        <input type="text" name="name" id="" value="{{$key3->name}}"><br><br>
+        <label for="" >enter password</label>
+        <input type="text" name="psw" id="" value="{{$key3->password}}"><br><br>
+        <label for="" >enter mobile</label>
+        <input type="text" name="mob" id="" value="{{$key3->mobile}}"><br><br>
+        <label for="" >enter email</label>
+        <input type="text" name="email" id="" value="{{$key3->email}}"><br><br>
+        <button type="submit">submit</button>
+    </form>
+    @endif
+
+
+
+home Page
+___________
+
+@if(isset($key1))
+   <h1>hai {{$key1->name}}</h1>
+
+  <br>
+   <table  border=3>
+        <tr>
+            <td>{{$key1->id}}</td>
+            <td>{{$key1->name}}</td>
+            <td>{{$key1->password}}</td>
+            <td>{{$key1->mobile}}</td>
+            <td>{{$key1->email}}</td>
+        </tr>
+       
+    </table>
+
+
+login page
+__________
+
+<form action="" method="post">
+        @csrf
+    <label for="" >enter name</label>
+        <input type="text" name="name" id="" placeholder="enter anme"><br><br>
+        <label for="" >enter password</label>
+        <input type="text" name="psw" id="" placeholder="enter anme"><br><br>
+        <button type="submit">submit</button>
+    </form>
+
+
+
+
+web.php
+________
+
+Route::view('regi','register');
+ Route::post('regi',[App\Http\Controllers\control::class,'insert_fn']);
+ Route::view('login','login');
+ Route::post('login',[App\Http\Controllers\control::class,'chk_login']);
+ Route::view('home','home');
+ Route::view('showall','showall');
+ Route::get('showall',[App\Http\Controllers\control::class,'showall']);
+ Route::get('logout',[App\Http\Controllers\control::class,'logout']);
+ Route::get('delete/{id}',[App\Http\Controllers\control::class,'del']);
+ Route::view('update','update');
+ Route::get('update/{id}',[App\Http\Controllers\control::class,'update']);
+ Route::post('update1/{id}',[App\Http\Controllers\control::class,'update_new']);
+
+
