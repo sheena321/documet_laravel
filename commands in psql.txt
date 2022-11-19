@@ -72,6 +72,9 @@ $teacher = Teachers::find(2);
 $teacher ->delete();
 
 OR
+$teacher = Teachers::find(2)->delete();
+
+OR
 
 To delete one record:
 Teachers::destroy(2);
@@ -99,3 +102,16 @@ DB_PORT=5433
 DB_DATABASE=larav
 DB_USERNAME=postgres
 DB_PASSWORD=root
+
+
+join()
+_____
+
+$data=item::select('items.*','stocks.stk')->join('stocks','stocks.p_id','=','items.id')->get();
+
+$products=category::select('categories.pro_name','categories.pro_price','product1s.cat_name')->join('product1s','product1s.id','=','categories.fk_category_id')->get();
+
+
+$data = Treatment::select('treatments.*', 'departments.name as department_name', 'taxes.name as tax_name')
+                ->leftJoin('departments', 'treatments.department_id', '=', 'departments.id')
+                ->leftJoin('taxes', 'treatments.tax_id', '=', 'taxes.id');
